@@ -18,9 +18,9 @@ func NewBlockchain(path string, magic [4]byte) (blockchain *Blockchain, err erro
     blockchain = new(Blockchain)
     blockchain.Path = path
     blockchain.Magic = magic
-    blockchain.CurrentId = 0
+    blockchain.CurrentId = 1
 
-    f, err := os.Open(blkfilename(path, 0))
+    f, err := os.Open(blkfilename(path, 1))
     if err != nil {
         return
     }
@@ -114,7 +114,7 @@ func (blockchain *Blockchain) SkipTo(blkId uint32, offset int64) (err error) {
 }
 
 func blkfilename(path string, id uint32) string {
-    return fmt.Sprintf("%s/blk%05d.dat", path, id)
+    return fmt.Sprintf("%s/blk%04d.dat", path, id)
 }
 
 func blksize(buf []byte) (size uint64) {
