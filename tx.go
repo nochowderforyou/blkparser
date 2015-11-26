@@ -5,8 +5,22 @@ import (
 	"fmt"
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/txscript"
+	"github.com/btcsuite/btcd/wire"
 	"strings"
 )
+
+// ClamMainNet Indicates the CLAM network.
+const ClamMainNet wire.BitcoinNet = 0x15352203
+
+// ClamParams contains CLAM network parameters.
+var ClamParams = chaincfg.Params{
+	Name:             "clammainnet",
+	Net:              ClamMainNet,
+	DefaultPort:      "31174",
+	PubKeyHashAddrID: 0x89,
+	ScriptHashAddrID: 0x0d,
+	PrivateKeyID:     0x85,
+}
 
 // Tx models the data in a transaction.
 type Tx struct {
@@ -130,7 +144,7 @@ func NewTxOut(txoutraw []byte) (txout *TxOut, offset int) {
 	txout.Pkscript = txoutraw[offset : offset+pkscript]
 	offset += pkscript
 
-	_, addrhash, _, err := txscript.ExtractPkScriptAddrs(txout.Pkscript, &chaincfg.MainNetParams)
+	_, addrhash, _, err := txscript.ExtractPkScriptAddrs(txout.Pkscript, &ClamParams)
 	if err != nil {
 		return
 	}

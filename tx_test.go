@@ -48,6 +48,9 @@ func TestParseTx(t *testing.T) {
 	}
 
 	txOut := tx.TxOuts[0]
+	if txOut.Addr != "xJDCLAMZW9xZEFRfWhxXkcCGYkHAzhsjT5" {
+		t.Error("For tx output 0 address, expected xJDCLAMZW9xZEFRfWhxXkcCGYkHAzhsjT5, got", txOut.Addr)
+	}
 	if txOut.Value != 67275127 {
 		t.Error("For tx output 0 value, expected 67275127, got", txOut.Value)
 	}
