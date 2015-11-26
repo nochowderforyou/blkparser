@@ -2,8 +2,10 @@ package blkparser
 
 import (
 	"encoding/binary"
+	"fmt"
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/txscript"
+	"strings"
 )
 
 // Tx models the data in a transaction.
@@ -13,7 +15,7 @@ type Tx struct {
 	LockTime uint32
 	Version  uint32
 	Time     uint32
-	Comment  []byte
+	Comment  string
 	TxInCnt  uint32
 	TxOutCnt uint32
 	TxIns    []*TxIn
@@ -89,7 +91,10 @@ func NewTx(rawtx []byte) (tx *Tx, offset int) {
 	offset += 4
 	comment, commentsize := DecodeVariableLengthInteger(rawtx[offset:])
 	offset += commentsize
-	tx.Comment = rawtx[offset : offset+comment]
+	commentstr := fmt.Sprintf("%+q", rawtx[offset:offset+comment])
+	// Trim once on each end of the comment in case the actual speech has quotation marks.
+	commentstr = strings.TrimSuffix(strings.TrimPrefix(commentstr, "\""), "\"")
+	tx.Comment = commentstr
 	offset += comment
 
 	return

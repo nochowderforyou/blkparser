@@ -60,9 +60,8 @@ func TestParseTx(t *testing.T) {
 		t.Error("For Tx locktime, expected 0, got", tx.LockTime)
 	}
 
-	actualComment, _ := hex.DecodeString("676f6f646c75636b2070656173656e697a")
-	if bytes.Equal(actualComment, tx.Comment) != true {
-		t.Errorf("For tx comment, expected 676f6f646c75636b2070656173656e697a, got %x", tx.Comment)
+	actualComment := "goodluck peaseniz"
+	if actualComment != tx.Comment {
+		t.Error("For tx comment, expected", actualComment, "got", tx.Comment)
 	}
-
 }
