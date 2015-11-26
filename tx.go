@@ -12,6 +12,8 @@ type Tx struct {
 	Size     uint32
 	LockTime uint32
 	Version  uint32
+	Time     uint32
+	Comment  []byte
 	TxInCnt  uint32
 	TxOutCnt uint32
 	TxIns    []*TxIn
@@ -56,7 +58,8 @@ func ParseTxs(txsraw []byte) (txs []*Tx, err error) {
 func NewTx(rawtx []byte) (tx *Tx, offset int) {
 	tx = new(Tx)
 	tx.Version = binary.LittleEndian.Uint32(rawtx[0:4])
-	offset = 4
+	tx.Time = binary.LittleEndian.Uint32(rawtx[4:8])
+	offset = 8
 
 	txincnt, txincntsize := DecodeVariableLengthInteger(rawtx[offset:])
 	offset += txincntsize
@@ -84,6 +87,10 @@ func NewTx(rawtx []byte) (tx *Tx, offset int) {
 
 	tx.LockTime = binary.LittleEndian.Uint32(rawtx[offset : offset+4])
 	offset += 4
+	comment, commentsize := DecodeVariableLengthInteger(rawtx[offset:])
+	offset += commentsize
+	tx.Comment = rawtx[offset : offset+comment]
+	offset += comment
 
 	return
 }
