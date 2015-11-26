@@ -42,6 +42,7 @@ func NewBlock(rawblock []byte) (block *Block, err error) {
 	txs, _ := ParseTxs(rawblock[80:])
 
 	block.Txs = txs
+	block.TxCnt = uint32(len(txs))
 
 	return
 }
