@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+// Blockchain models the data necessary to locate blockchain files.
 type Blockchain struct {
 	Path        string
 	Magic       [4]byte
@@ -14,6 +15,7 @@ type Blockchain struct {
 	CurrentId   uint32
 }
 
+// NewBlockchain creates a new Blockchain with the given identifying information.
 func NewBlockchain(path string, magic [4]byte) (blockchain *Blockchain, err error) {
 	blockchain = new(Blockchain)
 	blockchain.Path = path
@@ -29,6 +31,7 @@ func NewBlockchain(path string, magic [4]byte) (blockchain *Blockchain, err erro
 	return
 }
 
+// NextBlock reads the next block and returns a Block modeling its data.
 func (blockchain *Blockchain) NextBlock() (block *Block, err error) {
 	rawblock, err := blockchain.FetchNextBlock()
 	if err != nil {
@@ -50,6 +53,7 @@ func (blockchain *Blockchain) NextBlock() (block *Block, err error) {
 	return
 }
 
+// SkipBlock moves the blockchain file cursor forward one block.
 func (blockchain *Blockchain) SkipBlock() (err error) {
 	_, err = blockchain.FetchNextBlock()
 	if err != nil {
@@ -67,6 +71,7 @@ func (blockchain *Blockchain) SkipBlock() (err error) {
 	return
 }
 
+// FetchNextBlock reads the next block's data and returns it.
 func (blockchain *Blockchain) FetchNextBlock() (rawblock []byte, err error) {
 	buf := [4]byte{}
 	_, err = blockchain.CurrentFile.Read(buf[:])

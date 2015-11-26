@@ -6,6 +6,7 @@ import (
 	"github.com/btcsuite/btcd/txscript"
 )
 
+// Tx models the data in a transaction.
 type Tx struct {
 	Hash     string
 	Size     uint32
@@ -17,6 +18,7 @@ type Tx struct {
 	TxOuts   []*TxOut
 }
 
+// TxIn models the data in a transaction input.
 type TxIn struct {
 	InputHash string
 	InputVout uint32
@@ -24,12 +26,14 @@ type TxIn struct {
 	Sequence  uint32
 }
 
+// TxOut models the data in a transaction output.
 type TxOut struct {
 	Addr     string
 	Value    uint64
 	Pkscript []byte
 }
 
+// ParseTxs deserializes a byte slice into a Tx slice.
 func ParseTxs(txsraw []byte) (txs []*Tx, err error) {
 	offset := int(0)
 	txcnt, txcnt_size := DecodeVariableLengthInteger(txsraw[offset:])
@@ -48,6 +52,7 @@ func ParseTxs(txsraw []byte) (txs []*Tx, err error) {
 	return
 }
 
+// NewTx deserializes a byte slice into a Tx.
 func NewTx(rawtx []byte) (tx *Tx, offset int) {
 	tx = new(Tx)
 	tx.Version = binary.LittleEndian.Uint32(rawtx[0:4])
@@ -83,6 +88,7 @@ func NewTx(rawtx []byte) (tx *Tx, offset int) {
 	return
 }
 
+// NewTxIn deserializes a byte slice into a TxIn.
 func NewTxIn(txinraw []byte) (txin *TxIn, offset int) {
 	txin = new(TxIn)
 	txin.InputHash = HashString(txinraw[0:32])
@@ -100,6 +106,7 @@ func NewTxIn(txinraw []byte) (txin *TxIn, offset int) {
 	return
 }
 
+// NewTxOut deserializes a byte slice into a TxOut.
 func NewTxOut(txoutraw []byte) (txout *TxOut, offset int) {
 	txout = new(TxOut)
 	txout.Value = binary.LittleEndian.Uint64(txoutraw[0:8])

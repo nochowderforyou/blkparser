@@ -25,6 +25,7 @@ func DecodeVariableLengthInteger(raw []byte) (cnt int, cnt_size int) {
 	return
 }
 
+// GetShaString returns the hex-encoded sha256d hash of a byte slice.
 func GetShaString(data []byte) (res string) {
 	sha := sha256.New()
 	sha.Write(data[:])
@@ -36,6 +37,7 @@ func GetShaString(data []byte) (res string) {
 	return
 }
 
+// HashString returns the little-endian hex-encoded format of a 32 byte hash.
 func HashString(data []byte) (res string) {
 	for i := 0; i < 32; i++ {
 		res += fmt.Sprintf("%02x", data[31-i])

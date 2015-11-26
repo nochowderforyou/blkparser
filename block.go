@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 )
 
+// Block models the data in a blockchain block.
 type Block struct {
 	Raw         []byte  `json:"-"`
 	Hash        string  `json:"hash"`
@@ -24,6 +25,7 @@ type Block struct {
 	Next        string  `json:"next_block"`
 }
 
+// NewBlock deserializes a byte slice into a Block.
 func NewBlock(rawblock []byte) (block *Block, err error) {
 	block = new(Block)
 	block.Raw = rawblock
