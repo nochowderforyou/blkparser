@@ -119,7 +119,7 @@ func (blockchain *Blockchain) SkipTo(blkId uint32, offset int64) (err error) {
 }
 
 func blkfilename(path string, id uint32) string {
-	return fmt.Sprintf("%s/blk%05d.dat", path, id)
+	return fmt.Sprintf("%s/blk%04d.dat", path, id+1)
 }
 
 func blksize(buf []byte) (size uint64) {
