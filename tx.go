@@ -103,13 +103,15 @@ func NewTx(rawtx []byte) (tx *Tx, offset int) {
 
 	tx.LockTime = binary.LittleEndian.Uint32(rawtx[offset : offset+4])
 	offset += 4
-	comment, commentsize := DecodeVariableLengthInteger(rawtx[offset:])
-	offset += commentsize
-	commentstr := fmt.Sprintf("%+q", rawtx[offset:offset+comment])
-	// Trim once on each end of the comment in case the actual speech has quotation marks.
-	commentstr = strings.TrimSuffix(strings.TrimPrefix(commentstr, "\""), "\"")
-	tx.Comment = commentstr
-	offset += comment
+	if tx.Version > 1 {
+		comment, commentsize := DecodeVariableLengthInteger(rawtx[offset:])
+		offset += commentsize
+		commentstr := fmt.Sprintf("%+q", rawtx[offset:offset+comment])
+		// Trim once on each end of the comment in case the actual speech has quotation marks.
+		commentstr = strings.TrimSuffix(strings.TrimPrefix(commentstr, "\""), "\"")
+		tx.Comment = commentstr
+		offset += comment
+	}
 
 	return
 }
