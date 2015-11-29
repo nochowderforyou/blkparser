@@ -29,8 +29,12 @@ func NewBlock(rawblock []byte) (block *Block, err error) {
 	block = new(Block)
 	block.Raw = rawblock
 
-	block.Hash = GetShaString(rawblock[:80])
 	block.Version = binary.LittleEndian.Uint32(rawblock[0:4])
+	if block.Version > 6 {
+		block.Hash = GetShaString(rawblock[:80])
+	} else {
+		block.Hash, _ = GetScryptString(rawblock[:80])
+	}
 	if !bytes.Equal(rawblock[4:36], []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}) {
 		block.Parent = HashString(rawblock[4:36])
 	}

@@ -3,6 +3,7 @@ package blkparser
 import (
 	"crypto/sha256"
 	"fmt"
+	"golang.org/x/crypto/scrypt"
 )
 
 // Get the Tx count, decode the variable length integer
@@ -33,6 +34,16 @@ func GetShaString(data []byte) (res string) {
 	sha.Reset()
 	sha.Write(tmp)
 	hash := sha.Sum(nil)
+	res = HashString(hash)
+	return
+}
+
+// GetScryptString returns the hex-encoded scrypt hash of a byte slice.
+func GetScryptString(data []byte) (res string, err error) {
+	hash, err := scrypt.Key(data, data, 1024, 1, 1, 32)
+	if err != nil {
+		return "", err
+	}
 	res = HashString(hash)
 	return
 }
