@@ -45,4 +45,11 @@ func TestParseBlock(t *testing.T) {
 	if block.TxCnt != 3 {
 		t.Error("For block tx count, expected 3, got", block.TxCnt)
 	}
+	actualSig := "304402203241198edb3ced65052cfd4c1a6976bc2992c42d3f11d351e06e1c479cce1c3c022072f791601210b489bc496415c4c3d06dd9c8de4479f16b7f4b9581e91906d661"
+	if block.BlockSig != actualSig {
+		t.Error("For block sig, expected", actualSig, "got", block.BlockSig)
+	}
+	if block.IsProofOfStake() != true {
+		t.Error("For block IsProofOfStake(), expected true, got false")
+	}
 }

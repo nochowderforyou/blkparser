@@ -51,9 +51,19 @@ type TxOut struct {
 	Pkscript []byte
 }
 
+func (tx *Tx) IsCoinStake() bool {
+	if len(tx.TxIns) > 0 &&
+		!(tx.TxIns[0].InputHash == fmt.Sprintf("%064x", 0) && tx.TxIns[0].InputVout == ^uint32(0)) &&
+		len(tx.TxOuts) >= 2 &&
+		(tx.TxOuts[0].Value == 0 && tx.TxOuts[0].Addr == "") {
+		return true
+	}
+	return false
+}
+
 // ParseTxs deserializes a byte slice into a Tx slice.
-func ParseTxs(txsraw []byte) (txs []*Tx, err error) {
-	offset := int(0)
+func ParseTxs(txsraw []byte) (txs []*Tx, offset int, err error) {
+	offset = int(0)
 	txcnt, txcnt_size := DecodeVariableLengthInteger(txsraw[offset:])
 	offset += txcnt_size
 

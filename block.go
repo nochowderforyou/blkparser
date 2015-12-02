@@ -3,6 +3,7 @@ package blkparser
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/hex"
 )
 
 // Block models the data in a blockchain block.
@@ -17,11 +18,19 @@ type Block struct {
 	Bits        uint32  `json:"bits"`
 	Nonce       uint32  `json:"nonce"`
 	Size        uint32  `json:"size"`
+	BlockSig    string  `json:"signature"`
 	TxCnt       uint32  `json:"n_tx"`
 	TotalBTC    uint64  `json:"total_out"`
 	BlockReward float64 `json:"-"`
 	Parent      string  `json:"prev_block"`
 	Next        string  `json:"next_block"`
+}
+
+func (block *Block) IsProofOfStake() bool {
+	if len(block.Txs) > 1 && block.Txs[1].IsCoinStake() {
+		return true
+	}
+	return false
 }
 
 // NewBlock deserializes a byte slice into a Block.
@@ -44,10 +53,19 @@ func NewBlock(rawblock []byte) (block *Block, err error) {
 	block.Nonce = binary.LittleEndian.Uint32(rawblock[76:80])
 	block.Size = uint32(len(rawblock))
 
-	txs, _ := ParseTxs(rawblock[80:])
+	txs, offset, _ := ParseTxs(rawblock[80:])
 
 	block.Txs = txs
 	block.TxCnt = uint32(len(txs))
+
+	if block.IsProofOfStake() {
+		offset += 80
+		blocksig, blocksigsize := DecodeVariableLengthInteger(rawblock[offset:])
+		offset += blocksigsize
+
+		blocksigHex := hex.EncodeToString(rawblock[offset : offset+blocksig])
+		block.BlockSig = blocksigHex
+	}
 
 	return
 }
