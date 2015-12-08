@@ -6,24 +6,31 @@ import (
 	"encoding/hex"
 )
 
+// BlockPos models the position of a block's data in blockchain files.
+type BlockPos struct {
+	FileId uint32 `json:"fileId"`
+	Pos    int64  `json:"pos"`
+}
+
 // Block models the data in a blockchain block.
 type Block struct {
-	Raw         []byte  `json:"-"`
-	Hash        string  `json:"hash"`
-	Height      uint    `json:"height"`
-	Txs         []*Tx   `json:"tx,omitempty"`
-	Version     uint32  `json:"ver"`
-	MerkleRoot  string  `json:"mrkl_root"`
-	BlockTime   uint32  `json:"time"`
-	Bits        uint32  `json:"bits"`
-	Nonce       uint32  `json:"nonce"`
-	Size        uint32  `json:"size"`
-	BlockSig    string  `json:"signature"`
-	TxCnt       uint32  `json:"n_tx"`
-	TotalBTC    uint64  `json:"total_out"`
-	BlockReward float64 `json:"-"`
-	Parent      string  `json:"prev_block"`
-	Next        string  `json:"next_block"`
+	Raw         []byte   `json:"-"`
+	Pos         BlockPos `json:"-"`
+	Hash        string   `json:"hash"`
+	Height      uint     `json:"height"`
+	Txs         []*Tx    `json:"tx,omitempty"`
+	Version     uint32   `json:"ver"`
+	MerkleRoot  string   `json:"mrkl_root"`
+	BlockTime   uint32   `json:"time"`
+	Bits        uint32   `json:"bits"`
+	Nonce       uint32   `json:"nonce"`
+	Size        uint32   `json:"size"`
+	BlockSig    string   `json:"signature"`
+	TxCnt       uint32   `json:"n_tx"`
+	TotalBTC    uint64   `json:"total_out"`
+	BlockReward float64  `json:"-"`
+	Parent      string   `json:"prev_block"`
+	Next        string   `json:"next_block"`
 }
 
 func (block *Block) IsProofOfStake() bool {

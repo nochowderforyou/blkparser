@@ -33,7 +33,7 @@ func NewBlockchain(path string, magic [4]byte) (blockchain *Blockchain, err erro
 
 // NextBlock reads the next block and returns a Block modeling its data.
 func (blockchain *Blockchain) NextBlock() (block *Block, err error) {
-	rawblock, err := blockchain.FetchNextBlock()
+	rawblock, blockPos, err := blockchain.FetchNextBlock()
 	if err != nil {
 		newblkfile, err2 := os.Open(blkfilename(blockchain.Path, blockchain.CurrentId+1))
 		if err2 != nil {
@@ -42,20 +42,21 @@ func (blockchain *Blockchain) NextBlock() (block *Block, err error) {
 		blockchain.CurrentId++
 		blockchain.CurrentFile.Close()
 		blockchain.CurrentFile = newblkfile
-		rawblock, err = blockchain.FetchNextBlock()
+		rawblock, blockPos, err = blockchain.FetchNextBlock()
 	}
 
 	block, err = NewBlock(rawblock)
 	if err != nil {
 		return
 	}
+	block.Pos = blockPos
 
 	return
 }
 
 // SkipBlock moves the blockchain file cursor forward one block.
 func (blockchain *Blockchain) SkipBlock() (err error) {
-	_, err = blockchain.FetchNextBlock()
+	_, _, err = blockchain.FetchNextBlock()
 	if err != nil {
 		newblkfile, err2 := os.Open(blkfilename(blockchain.Path, blockchain.CurrentId+1))
 		if err2 != nil {
@@ -64,7 +65,7 @@ func (blockchain *Blockchain) SkipBlock() (err error) {
 		blockchain.CurrentId++
 		blockchain.CurrentFile.Close()
 		blockchain.CurrentFile = newblkfile
-		_, err = blockchain.FetchNextBlock()
+		_, _, err = blockchain.FetchNextBlock()
 
 	}
 
@@ -72,7 +73,7 @@ func (blockchain *Blockchain) SkipBlock() (err error) {
 }
 
 // FetchNextBlock reads the next block's data and returns it.
-func (blockchain *Blockchain) FetchNextBlock() (rawblock []byte, err error) {
+func (blockchain *Blockchain) FetchNextBlock() (rawblock []byte, blockPos BlockPos, err error) {
 	buf := [4]byte{}
 	_, err = blockchain.CurrentFile.Read(buf[:])
 	if err != nil {
@@ -100,6 +101,9 @@ func (blockchain *Blockchain) FetchNextBlock() (rawblock []byte, err error) {
 
 	offset, _ := blockchain.CurrentFile.Seek(0, 1)
 	fmt.Printf("POS:%v, %v", offset, blockchain.CurrentId)
+
+	blockPos.FileId = blockchain.CurrentId
+	blockPos.Pos = offset
 
 	return
 
